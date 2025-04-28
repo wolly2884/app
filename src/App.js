@@ -1,13 +1,15 @@
-import React from 'react';
-import './App.css';
-import Login from './login/Login';
+import { Routes, Route } from 'react-router-dom';
+import Login from './login/Login'; // Adjust path as needed
+import Sidebar from './components/Sidebar'; // Adjust path as needed
 
 function App() {
-    return (
-        <div className="App">
-            <Login />     
-        </div>
-    );
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/sidebar" element={<Sidebar />} />
+      {/* Other routes */}
+    </Routes>
+  );
 }
 
 export default App;

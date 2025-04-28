@@ -105,7 +105,7 @@ function Login() {
             }
 
             localStorage.setItem('user', JSON.stringify(data.user));
-            navigate('../src/components/sidebar'); // Redirect to sidebar page
+            navigate('/sidebar'); // Redirect to sidebar page
         } catch (error) {
             setPasswordError(error.message || 'Login failed. Please try again.');
             console.error('Login error:', error);
