@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Axios is loaded globally via CDN in index.html
+// If using a build system, import axios: import axios from 'axios';
+
 function validateCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
     if (cpf.length !== 11) return false;
@@ -37,6 +40,7 @@ function Login() {
     const [passwordError, setPasswordError] = useState('');
     const [loading, setLoading] = useState(false);
     const [remember, setRemember] = useState(false);
+    const navigate = useNavigate();
 
     const validateUsername = () => {
         setUsernameError('');
@@ -78,22 +82,12 @@ function Login() {
         }
 
         try {
-            const response = await fetch('nodestart.onrender.com/Token/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    nm_user: username,
-                    cd_pass: password,
-                }),
+            const response = await axios.post('https://nodestart.onrender.com/Token/login', {
+                nm_user: username,
+                cd_pass: password,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Login failed');
-            }
+            const data = response.data;
 
             if (!data.rowCount || data.rowCount < 1) {
                 throw new Error('Invalid login credentials');
@@ -104,9 +98,9 @@ function Login() {
             }
 
             localStorage.setItem('user', JSON.stringify(data.user));
-           
+            navigate('/sidebar'); // Redirect to sidebar page
         } catch (error) {
-            setPasswordError(error.message || 'Login failed. Please try again.');
+            setPasswordError(error.response?.data?.error || error.message || 'Login failed. Please try again.');
             console.error('Login error:', error);
         } finally {
             setLoading(false);
