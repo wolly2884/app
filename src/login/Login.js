@@ -37,7 +37,6 @@ function Login() {
     const [passwordError, setPasswordError] = useState('');
     const [loading, setLoading] = useState(false);
     const [remember, setRemember] = useState(false);
-    const navigate = useNavigate();
 
     const validateUsername = () => {
         setUsernameError('');
@@ -105,7 +104,7 @@ function Login() {
             }
 
             localStorage.setItem('user', JSON.stringify(data.user));
-            navigate('/sidebar'); // Redirect to sidebar page
+           
         } catch (error) {
             setPasswordError(error.message || 'Login failed. Please try again.');
             console.error('Login error:', error);
