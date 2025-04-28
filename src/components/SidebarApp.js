@@ -1,3 +1,5 @@
+import Sidebar from './Sidebar';
+
 function SidebarApp() {
     return (
         <div className="App">
@@ -5,3 +7,5 @@ function SidebarApp() {
         </div>
     );
 }
+
+export default SidebarApp;
