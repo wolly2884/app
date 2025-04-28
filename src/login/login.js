@@ -1,5 +1,5 @@
-const { useState } = React;
-const { useNavigate } = ReactRouterDOM;
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function validateCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
@@ -71,11 +71,6 @@ function Login() {
         setUsernameError('');
         setPasswordError('');
         setLoading(true);
-
-        // if (!validateUsername()) {
-        //     setLoading(false);
-        //     return;
-        // }
 
         if (!password) {
             setPasswordError('Password is required');
@@ -186,3 +181,5 @@ function Login() {
         </div>
     );
 }
+
+export default Login;
