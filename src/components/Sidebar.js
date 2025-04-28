@@ -84,13 +84,13 @@ function App() {
         <div className="profile-section">
           <img
             className="profile-picture"
-            src={`${process.env.PUBLIC_URL}/Kavya.JPG`}
+            src={`${process.env.PUBLIC_URL}/bradesco.svg`}
             alt="Profile"
           />
           {isOpen && (
             <div className="profile-details">
-              <p className="profile-name">Kavya Balla</p>
-              <p className="profile-role">Web Developer</p>
+              <p className="profile-name">bradesco</p>
+              <p className="profile-role">Plano de Saúde</p>
             </div>
           )}
         </div>
