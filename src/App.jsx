@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import React from 'react';
-import Login from './components/Login';
+import Login from '../public/Login';
 import Sidebar from './components/Sidebar';
 
 function App() {
