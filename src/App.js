@@ -6,7 +6,7 @@ import Login from './login/Login'
 function App() {
     return (
         <div className="App">
-            <Sidebar />        
+            <Login />        
         </div>
     );
 }
