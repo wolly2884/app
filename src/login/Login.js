@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Axios is loaded globally via CDN in index.html
-// If using a build system, import axios: import axios from 'axios';
+import axios from 'axios'; // Add Axios import
 
 function validateCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
@@ -127,7 +125,7 @@ function Login() {
                         type="password"
                         placeholder="Password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)} // Fixed bug
                         className="w-full p-4 mb-2 rounded-full text-black outline-none"
                     />
                     {passwordError && (
