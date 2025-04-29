@@ -1,35 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Add Axios import
+import axios from 'axios';
 
-function validateCPF(cpf) {
-    cpf = cpf.replace(/\D/g, '');
-    if (cpf.length !== 11) return false;
-    if (/^(\d)\1{10}$/.test(cpf)) return false;
-
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-        sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.charAt(9))) return false;
-
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-        sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.charAt(10))) return false;
-
-    return true;
-}
-
-function validateEmail(email) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-}
+// Note: To resolve the babel-preset-react-app dependency warning, run:
+// npm install --save-dev @babel/plugin-proposal-private-property-in-object
+// or
+// yarn add --dev @babel/plugin-proposal-private-property-in-object
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -40,39 +16,20 @@ function Login() {
     const [remember, setRemember] = useState(false);
     const navigate = useNavigate();
 
-    const validateUsername = () => {
-        setUsernameError('');
-        if (!username) {
-            setUsernameError('Username is required');
-            return false;
-        }
-
-        const isCPF = /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/.test(username) || /^\d{11}$/.test(username);
-        const isEmail = username.includes('@');
-
-        if (isCPF) {
-            if (!validateCPF(username)) {
-                setUsernameError('Invalid CPF');
-                return false;
-            }
-        } else if (isEmail) {
-            if (!validateEmail(username)) {
-                setUsernameError('Invalid Email');
-                return false;
-            }
-        } else {
-            setUsernameError('Please enter a valid CPF or Email');
-            return false;
-        }
-        return true;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setUsernameError('');
         setPasswordError('');
         setLoading(true);
 
+        // Validate username
+        if (!username) {
+            setUsernameError('Username is required');
+            setLoading(false);
+            return;
+        }
+
+        // Validate password
         if (!password) {
             setPasswordError('Password is required');
             setLoading(false);
@@ -85,13 +42,14 @@ function Login() {
                 cd_pass: password,
             });
 
-
             const data = response.data;
 
             if (!data.rowCount || data.rowCount < 1) {
                 throw new Error('Invalid login credentials');
             }
 
+            // WARNING: Comparing plaintext passwords is insecure.
+            // The backend should hash passwords (e.g., using bcrypt) and compare hashes.
             if (data.rows[0].cd_pass !== password) {
                 throw new Error('Invalid password');
             }
@@ -99,11 +57,19 @@ function Login() {
             localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/sidebar'); // Redirect to sidebar page
         } catch (error) {
-            setPasswordError(error.response?.data?.error || error.message || 'Login failed. Please try again.');
+            setPasswordError(
+                error.response?.data?.error || error.message || 'Login failed. Please try again.'
+            );
             console.error('Login error:', error);
         } finally {
             setLoading(false);
         }
+    };
+
+    // Placeholder for password reset logic
+    const handleForgotPassword = () => {
+        // Implement your password reset logic here (e.g., open a modal, navigate to a reset page, etc.)
+        console.log('Forgot password clicked');
     };
 
     return (
@@ -118,6 +84,7 @@ function Login() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full p-4 mb-2 rounded-full text-black outline-none"
+                        aria-label="Username"
                     />
                     {usernameError && (
                         <div className="text-[#ff4d4d] text-sm mt-1 text-center">{usernameError}</div>
@@ -126,8 +93,9 @@ function Login() {
                         type="password"
                         placeholder="Password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)} // Fixed bug
+                        onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-4 mb-2 rounded-full text-black outline-none"
+                        aria-label="Password"
                     />
                     {passwordError && (
                         <div className="text-[#ff4d4d] text-sm mt-1 text-center">{passwordError}</div>
@@ -142,9 +110,12 @@ function Login() {
                             />
                             Remember
                         </label>
-                        <a href="#" className="text-white hover:underline">
+                        <button
+                            onClick={handleForgotPassword}
+                            className="text-white hover:underline bg-transparent border-none cursor-pointer"
+                        >
                             Forget Password?
-                        </a>
+                        </button>
                     </div>
                     <button
                         onClick={handleSubmit}
@@ -156,7 +127,23 @@ function Login() {
                         SUBMIT
                     </button>
                     {loading && (
-                        <div className="absolute bottom-2 text-sm">Loading...</div>
+                        <div className="absolute bottom-2 text-sm flex items-center">
+                            <svg
+                                className="animate-spin h-5 w-5 mr-2"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="white"
+                                    strokeWidth="4"
+                                    fill="none"
+                                />
+                            </svg>
+                            Loading...
+                        </div>
                     )}
                 </div>
                 {/* Illustration Section */}
@@ -167,6 +154,7 @@ function Login() {
                             backgroundImage:
                                 "url('https://static.vecteezy.com/ti/vetor-gratis/p1/29898995-placa-dentro-para-conta-do-utilizador-autorizacao-conecte-se-autenticacao-pagina-conceito-smartphone-com-conecte-se-e-senha-formato-pagina-em-tela-estoque-ilustracao-vetor.jpg')",
                         }}
+                        aria-hidden="true"
                     ></div>
                 </div>
             </div>
