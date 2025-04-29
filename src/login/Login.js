@@ -29,44 +29,44 @@ function Login() {
             setLoading(false);
             return;
         }
-
-        try {
-            const response = await fetch('https://nodestart.onrender.com/Token/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    nm_user: username,
-                    cd_pass: password,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Login failed');
-            }
-
-            const data = await response.json();
-
-            if (!data.rowCount || data.rowCount < 1) {
-                throw new Error('Invalid login credentials');
-            }
+//
+//       try {
+//            const response = await fetch('https://nodestart.onrender.com/Token/login', {
+//              method: 'POST',
+//            headers: {
+//              'Content-Type': 'application/json',
+//                },
+//                body: JSON.stringify({
+//                    nm_user: username,
+//                    cd_pass: password,
+//                }),
+//            });
+//
+//          if (!response.ok) {
+//                const errorData = await response.json();
+//                throw new Error(errorData.error || 'Login failed');
+//          }
+//
+//           const data = await response.json();
+//
+//            if (!data.rowCount || data.rowCount < 1) {
+//              throw new Error('Invalid login credentials');
+//            }
 
             // WARNING: Comparing plaintext passwords is insecure.
             // The backend should hash passwords (e.g., using bcrypt) and compare hashes.
-            if (data.rows[0].cd_pass !== password) {
-                throw new Error('Invalid password');
-            }
+ //           if (data.rows[0].cd_pass !== password) {
+ //               throw new Error('Invalid password');
+//            }
 
-            localStorage.setItem('user', JSON.stringify(data.user));
+//            localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/sidebar'); // Redirect to sidebar page
-        } catch (error) {
-            setPasswordError(error.message || 'Login failed. Please try again.');
-            console.error('Login error:', error);
-        } finally {
-            setLoading(false);
-        }
+//        } catch (error) {
+//            setPasswordError(error.message || 'Login failed. Please try again.');
+//            console.error('Login error:', error);
+//        } finally {
+//            setLoading(false);
+//        }
     };
 
     // Placeholder for password reset logic
