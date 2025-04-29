@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../components/api'; // Import the login function
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -29,49 +30,21 @@ function Login() {
             setLoading(false);
             return;
         }
-//
-//       try {
-//            const response = await fetch('https://nodestart.onrender.com/Token/login', {
-//              method: 'POST',
-//            headers: {
-//              'Content-Type': 'application/json',
-//                },
-//                body: JSON.stringify({
-//                    nm_user: username,
-//                    cd_pass: password,
-//                }),
-//            });
-//
-//          if (!response.ok) {
-//                const errorData = await response.json();
-//                throw new Error(errorData.error || 'Login failed');
-//          }
-//
-//           const data = await response.json();
-//
-//            if (!data.rowCount || data.rowCount < 1) {
-//              throw new Error('Invalid login credentials');
-//            }
 
-            // WARNING: Comparing plaintext passwords is insecure.
-            // The backend should hash passwords (e.g., using bcrypt) and compare hashes.
- //           if (data.rows[0].cd_pass !== password) {
- //               throw new Error('Invalid password');
-//            }
-
-//            localStorage.setItem('user', JSON.stringify(data.user));
+        try {
+            const data = await login(username, password); // Use the login function
+            localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/sidebar'); // Redirect to sidebar page
-//        } catch (error) {
-//            setPasswordError(error.message || 'Login failed. Please try again.');
-//            console.error('Login error:', error);
-//        } finally {
-//            setLoading(false);
-//        }
+        } catch (error) {
+            setPasswordError(error.message || 'Login failed. Please try again.');
+            console.error('Login error:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Placeholder for password reset logic
     const handleForgotPassword = () => {
-        // Implement your password reset logic here (e.g., open a modal, navigate to a reset page, etc.)
         console.log('Forgot password clicked');
     };
 
