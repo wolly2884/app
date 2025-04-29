@@ -33,7 +33,6 @@ function Login() {
         try {
             const response = await fetch('https://nodestart.onrender.com/Token/login', {
                 method: 'POST',
-                mode: 'no-cors', // This makes the response opaque
                 headers: {
                     'Content-Type': 'application/json',
                 },
