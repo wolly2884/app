@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-// Note: To resolve the babel-preset-react-app dependency warning, run:
-// npm install --save-dev @babel/plugin-proposal-private-property-in-object
-// or
-// yarn add --dev @babel/plugin-proposal-private-property-in-object
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -37,12 +31,23 @@ function Login() {
         }
 
         try {
-            const response = await axios.post('https://nodestart.onrender.com/Token/login', {
-                nm_user: username,
-                cd_pass: password,
+            const response = await fetch('https://nodestart.onrender.com/Token/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nm_user: username,
+                    cd_pass: password,
+                }),
             });
 
-            const data = response.data;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Login failed');
+            }
+
+            const data = await response.json();
 
             if (!data.rowCount || data.rowCount < 1) {
                 throw new Error('Invalid login credentials');
@@ -57,9 +62,7 @@ function Login() {
             localStorage.setItem('user', JSON.stringify(data.user));
             navigate('/sidebar'); // Redirect to sidebar page
         } catch (error) {
-            setPasswordError(
-                error.response?.data?.error || error.message || 'Login failed. Please try again.'
-            );
+            setPasswordError(error.message || 'Login failed. Please try again.');
             console.error('Login error:', error);
         } finally {
             setLoading(false);
@@ -161,6 +164,5 @@ function Login() {
         </div>
     );
 }
-
 
 export default Login;
