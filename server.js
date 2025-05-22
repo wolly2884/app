@@ -1,28 +1,33 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
 
 const app = express();
-app.use(cors());
-
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: '*' }
+const io = new Server(server);
+
+// Serve static files
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', socket => {
-  console.log(`User connected: ${socket.id}`);
+// Handle Socket.IO connections
+io.on('connection', (socket) => {
+    console.log('A user connected');
 
-  socket.on('send_message', data => {
-    io.emit('receive_message', data); // Broadcast para todos
-  });
+    // Handle incoming chat messages
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg); // Broadcast to all clients
+    });
 
-  socket.on('disconnect', () => {
-    console.log(`User disconnected: ${socket.id}`);
-  });
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
 });
 
-server.listen(3001, () => {
-  console.log('Server running on http://localhost:3001');
+// Start server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
