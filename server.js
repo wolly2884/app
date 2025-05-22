@@ -4,7 +4,12 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: '*', // Ajuste para 'https://app-n1qv.onrender.com' em produção
+        methods: ['GET', 'POST'],
+    },
+});
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -13,10 +18,9 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('A user connected');
 
-    // Log quando uma mensagem é recebida
     socket.on('chat message', (msg) => {
-        console.log('Mensagem recebida:', msg); // Log no console do servidor
-        io.emit('chat message', msg); // Broadcast para todos os clientes
+        console.log('Mensagem recebida:', msg);
+        io.emit('chat message', msg);
     });
 
     socket.on('disconnect', () => {
