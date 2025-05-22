@@ -1,16 +1,28 @@
 const express = require('express');
-const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
+
 const app = express();
-const port = process.env.PORT || 5000; // Choose a port for your server
+app.use(cors());
 
-// Serve static files from the 'build' folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Handle all other requests by serving the main index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*' }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+io.on('connection', socket => {
+  console.log(`User connected: ${socket.id}`);
+
+  socket.on('send_message', data => {
+    io.emit('receive_message', data); // Broadcast para todos
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
+
+server.listen(3001, () => {
+  console.log('Server running on http://localhost:3001');
 });
