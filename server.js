@@ -12,10 +12,6 @@ const io = new Server(server, {
 });
 
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 
